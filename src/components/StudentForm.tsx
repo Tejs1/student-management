@@ -10,7 +10,7 @@ export function StudentForm() {
     phoneNumber: "",
   });
 
-  const utils = api.useContext();
+  const utils = api.useUtils();
   const createStudent = api.students.create.useMutation({
     onSuccess: async () => {
       await utils.students.invalidate();
