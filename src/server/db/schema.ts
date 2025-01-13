@@ -20,11 +20,11 @@ export const createTable = pgTableCreator(
 );
 
 export const students = createTable("student", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(), 
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: varchar("name", { length: 256 }).notNull(),
   age: smallint("age").notNull(),
   class: varchar("class").notNull(),
-  phoneNumber: integer("phone_number").notNull(),
+  phoneNumber: varchar("phone_number", { length: 15 }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
