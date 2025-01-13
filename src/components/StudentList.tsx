@@ -3,6 +3,9 @@ import { api } from "@/trpc/react";
 import { useState, useEffect } from "react";
 import { StudentSkeleton } from "./StudentSkeleton";
 import { EditStudentModal } from "./EditStudentModal";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Card, CardContent } from "./ui/card";
 import type { Student } from "../types/student";
 
 function StudentListContent({ search }: { search: string }) {
@@ -47,45 +50,39 @@ function StudentListContent({ search }: { search: string }) {
 
   return (
     <>
-      <div className="grid gap-4">
+      <div className="space-y-4">
         {students.map((student) => (
-          <div
-            key={student.id}
-            className="flex items-center justify-between rounded-lg bg-white p-4"
-          >
-            <div>
-              <h3 className="font-bold">{student.name}</h3>
-              <p>Age: {student.age}</p>
-              <p>Class: {student.class}</p>
-              <p>Phone: {student.phoneNumber}</p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setEditingStudent(student)}
-                type="button"
-                className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-              >
-                Edit
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDelete(student.id)}
-                className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+          <Card key={student.id}>
+            <CardContent className="flex items-center justify-between p-6">
+              <div className="space-y-1">
+                <h3 className="font-semibold">{student.name}</h3>
+                <p className="text-sm text-muted-foreground">Age: {student.age}</p>
+                <p className="text-sm text-muted-foreground">Class: {student.class}</p>
+                <p className="text-sm text-muted-foreground">Phone: {student.phoneNumber}</p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="secondary"
+                  onClick={() => setEditingStudent(student)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => handleDelete(student.id)}
+                >
+                  Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       <EditStudentModal
         student={editingStudent}
         onClose={() => setEditingStudent(null)}
-        onSave={async (student) => {
-          await updateStudent.mutateAsync(student);
-          setEditingStudent(null);
-        }}
+        onSave={handleUpdate}
         isLoading={updateStudent.status === 'pending'}
       />
     </>
@@ -104,13 +101,12 @@ export function StudentList() {
   }, [search]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <input
+    <div className="space-y-4">
+      <Input
         type="text"
         placeholder="Search by name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="rounded-lg px-4 py-2"
       />
 
       <StudentListContent search={debouncedSearch} />

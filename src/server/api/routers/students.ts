@@ -43,7 +43,7 @@ export const studentsRouter = createTRPCRouter({
       z.object({
         id: z.number(),
         name: z.string().min(1),
-        age: z.number().min(5).max(100),
+        age: z.number().min(5).max(100), // Changed from string to number
         class: z.string().min(1),
         phoneNumber: z.number().min(1000000000).max(9999999999),
       }),

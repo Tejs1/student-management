@@ -1,21 +1,32 @@
 import { StudentForm } from "@/components/StudentForm";
 import { StudentList } from "@/components/StudentList";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 
 export default async function Home() {
   return (
-    <main className="container mx-auto p-4">
-      <h1 className="mb-8 text-4xl font-bold">Student Management System</h1>
+    <main className="container mx-auto p-6">
+      <h1 className="mb-8 scroll-m-20 text-4xl font-bold tracking-tight">
+        Student Management System
+      </h1>
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <div>
-          <h2 className="mb-4 text-2xl font-bold">Add New Student</h2>
-          <StudentForm />
-        </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Add New Student</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <StudentForm />
+          </CardContent>
+        </Card>
 
-        <div>
-          <h2 className="mb-4 text-2xl font-bold">Student List</h2>
-          <StudentList />
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Student List</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <StudentList />
+          </CardContent>
+        </Card>
       </div>
     </main>
   );

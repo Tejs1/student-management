@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import { api } from "@/trpc/react";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
 
 type FormErrors = {
   name?: string;
@@ -63,65 +66,60 @@ export function StudentForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <input
-          type="text"
-          placeholder="Name"
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="name">Name</Label>
+        <Input
+          id="name"
+          placeholder="Student name"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className={`rounded-lg px-4 py-2 ${
-            errors.name ? "border-2 border-red-500" : ""
-          }`}
+          className={errors.name ? "border-destructive" : ""}
         />
-        {errors.name && <span className="text-sm text-red-500">{errors.name}</span>}
+        {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
       </div>
 
-      <div className="flex flex-col gap-1">
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="age">Age</Label>
+        <Input
+          id="age"
           type="number"
-          placeholder="Age"
-          value={formData.age || ""}
-          onChange={(e) => setFormData({ ...formData, age: Number(e.target.value) })}
-          className={`rounded-lg px-4 py-2 ${
-            errors.age ? "border-2 border-red-500" : ""
-          }`}
+          placeholder="Age (5-100)"
+          value={formData.age}
+          onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+          className={errors.age ? "border-destructive" : ""}
         />
-        {errors.age && <span className="text-sm text-red-500">{errors.age}</span>}
+        {errors.age && <p className="text-sm text-destructive">{errors.age}</p>}
       </div>
 
-      <div className="flex flex-col gap-1">
-        <input
-          type="text"
-          placeholder="Class"
+      <div className="space-y-2">
+        <Label htmlFor="class">Class</Label>
+        <Input
+          id="class"
+          placeholder="Class/Grade"
           value={formData.class}
           onChange={(e) => setFormData({ ...formData, class: e.target.value })}
-          className={`rounded-lg px-4 py-2 ${
-            errors.class ? "border-2 border-red-500" : ""
-          }`}
+          className={errors.class ? "border-destructive" : ""}
         />
-        {errors.class && <span className="text-sm text-red-500">{errors.class}</span>}
+        {errors.class && <p className="text-sm text-destructive">{errors.class}</p>}
       </div>
 
-      <div className="flex flex-col gap-1">
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="phone">Phone Number</Label>
+        <Input
+          id="phone"
           type="number"
-          placeholder="Phone Number"
+          placeholder="10-digit phone number"
           value={formData.phoneNumber || ""}
-          onChange={(e) => setFormData({ ...formData, phoneNumber: Number.parseInt(e.target.value) || 0 })}
-          className={`rounded-lg px-4 py-2 ${
-            errors.phoneNumber ? "border-2 border-red-500" : ""
-          }`}
+          onChange={(e) => setFormData({ ...formData, phoneNumber: Number(e.target.value) || 0 })}
+          className={errors.phoneNumber ? "border-destructive" : ""}
         />
-        {errors.phoneNumber && <span className="text-sm text-red-500">{errors.phoneNumber}</span>}
+        {errors.phoneNumber && <p className="text-sm text-destructive">{errors.phoneNumber}</p>}
       </div>
 
-      <button
-        type="submit"
-        className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-      >
+      <Button type="submit" className="w-full">
         Add Student
-      </button>
+      </Button>
     </form>
   );
 }

@@ -114,13 +114,13 @@ export function EditStudentModal({
                   setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="Enter student's full name"
-                className={`col-span-3 ${errors.name ? "border-red-500" : ""}`}
+                className={`col-span-3 ${errors.name ? "border-destructive" : ""}`}
               />
             </div>
             <div className="grid grid-cols-4">
               <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
                 {errors.name && (
-                  <span className="text-red-500">{errors.name}</span>
+                  <span className="text-destructive">{errors.name}</span>
                 )}
               </div>
             </div>
@@ -139,13 +139,13 @@ export function EditStudentModal({
                   setFormData({ ...formData, age: Number(e.target.value) })
                 }
                 placeholder="Enter age (5-100)"
-                className={`col-span-3 ${errors.age ? "border-red-500" : ""}`}
+                className={`col-span-3 ${errors.age ? "border-destructive" : ""}`}
               />
             </div>
             <div className="grid grid-cols-4">
               <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
                 {errors.age && (
-                  <span className="text-red-500">{errors.age}</span>
+                  <span className="text-destructive">{errors.age}</span>
                 )}
               </div>
             </div>
@@ -163,13 +163,13 @@ export function EditStudentModal({
                   setFormData({ ...formData, class: e.target.value })
                 }
                 placeholder="Enter class or grade"
-                className={`col-span-3 ${errors.class ? "border-red-500" : ""}`}
+                className={`col-span-3 ${errors.class ? "border-destructive" : ""}`}
               />
             </div>
             <div className="grid grid-cols-4">
               <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
                 {errors.class && (
-                  <span className="text-red-500">{errors.class}</span>
+                  <span className="text-destructive">{errors.class}</span>
                 )}
               </div>
             </div>
@@ -191,13 +191,13 @@ export function EditStudentModal({
                   })
                 }
                 placeholder="Enter 10-digit phone number"
-                className={`col-span-3 ${errors.phoneNumber ? "border-red-500" : ""}`}
+                className={`col-span-3 ${errors.phoneNumber ? "border-destructive" : ""}`}
               />
             </div>
             <div className="grid grid-cols-4">
               <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
                 {errors.phoneNumber && (
-                  <span className="text-red-500">
+                  <span className="text-destructive">
                     {errors.phoneNumber}
                   </span>
                 )}
