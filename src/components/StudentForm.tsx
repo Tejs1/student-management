@@ -3,123 +3,133 @@ import { useState } from "react";
 import { api } from "@/trpc/react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-
-type FormErrors = {
-  name?: string;
-  age?: string;
-  class?: string;
-  phoneNumber?: string;
-};
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
+import { useForm } from "react-hook-form";
+import type { Student } from "../types/student";
 
 export function StudentForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    age: 0,
-    class: "",
-    phoneNumber: 0,
+  const form = useForm<Student>({
+    defaultValues: {
+      name: "",
+      age: "",
+      class: "",
+      phoneNumber: "",
+    },
   });
-  const [errors, setErrors] = useState<FormErrors>({});
 
   const utils = api.useUtils();
   const createStudent = api.students.create.useMutation({
     onSuccess: async () => {
       await utils.students.invalidate();
-      setFormData({ name: "", age: 0, class: "", phoneNumber: 0 });
+      form.reset();
     },
   });
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (formData.name.length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!formData.age) {
-      newErrors.age = "Age is required";
-    } else if (formData.age < 5 || formData.age > 100) {
-      newErrors.age = "Age must be between 5 and 100";
-    }
-
-    if (!formData.class.trim()) {
-      newErrors.class = "Class is required";
-    }
-
-    if (!formData.phoneNumber) {
-      newErrors.phoneNumber = "Phone number is required";
-    } else if (formData.phoneNumber < 1000000000 || formData.phoneNumber > 9999999999) {
-      newErrors.phoneNumber = "Please enter a valid 10-digit phone number";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateForm()) {
-      createStudent.mutate(formData);
-    }
+  const onSubmit = (data: Student) => {
+    createStudent.mutate(data);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="name">Name</Label>
-        <Input
-          id="name"
-          placeholder="Student name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className={errors.name ? "border-destructive" : ""}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          rules={{
+            required: "Name is required",
+            minLength: { value: 2, message: "Name must be at least 2 characters" },
+          }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Student name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
-      </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="age">Age</Label>
-        <Input
-          id="age"
-          type="number"
-          placeholder="Age (5-100)"
-          value={formData.age}
-          onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-          className={errors.age ? "border-destructive" : ""}
+        <FormField
+          control={form.control}
+          name="age"
+          rules={{
+            required: "Age is required",
+            min: { value: 5, message: "Age must be at least 5" },
+            max: { value: 100, message: "Age must be less than 100" },
+          }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Age</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="Age (5-100)"
+                  {...field}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.age && <p className="text-sm text-destructive">{errors.age}</p>}
-      </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="class">Class</Label>
-        <Input
-          id="class"
-          placeholder="Class/Grade"
-          value={formData.class}
-          onChange={(e) => setFormData({ ...formData, class: e.target.value })}
-          className={errors.class ? "border-destructive" : ""}
+        <FormField
+          control={form.control}
+          name="class"
+          rules={{ required: "Class is required" }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Class</FormLabel>
+              <FormControl>
+                <Input placeholder="Class/Grade" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.class && <p className="text-sm text-destructive">{errors.class}</p>}
-      </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="phone">Phone Number</Label>
-        <Input
-          id="phone"
-          type="number"
-          placeholder="10-digit phone number"
-          value={formData.phoneNumber || ""}
-          onChange={(e) => setFormData({ ...formData, phoneNumber: Number(e.target.value) || 0 })}
-          className={errors.phoneNumber ? "border-destructive" : ""}
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          rules={{
+            required: "Phone number is required",
+            min: {
+              value: 1000000000,
+              message: "Please enter a valid 10-digit phone number",
+            },
+            max: {
+              value: 9999999999,
+              message: "Please enter a valid 10-digit phone number",
+            },
+          }}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone Number</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="10-digit phone number"
+                  {...field}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.phoneNumber && <p className="text-sm text-destructive">{errors.phoneNumber}</p>}
-      </div>
 
-      <Button type="submit" className="w-full">
-        Add Student
-      </Button>
-    </form>
+        <Button type="submit" className="w-full">
+          Add Student
+        </Button>
+      </form>
+    </Form>
   );
 }

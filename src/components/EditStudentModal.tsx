@@ -11,7 +11,15 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
+import { useForm } from "react-hook-form";
 
 interface EditStudentModalProps {
   student: Student | null;
@@ -20,76 +28,33 @@ interface EditStudentModalProps {
   isLoading?: boolean;
 }
 
-type FormErrors = {
-  name?: string;
-  age?: string;
-  class?: string;
-  phoneNumber?: string;
-};
-
 export function EditStudentModal({
   student,
   onClose,
   onSave,
   isLoading,
 }: EditStudentModalProps) {
-  const [formData, setFormData] = useState<Student | null>(null);
-  const [errors, setErrors] = useState<FormErrors>({});
   const [open, setOpen] = useState(false);
+  const form = useForm<Student>();
 
   useEffect(() => {
     if (student) {
-      setFormData(student);
-      setErrors({});
+      form.reset(student);
       setOpen(true);
     }
-  }, [student]);
+  }, [student, form]);
 
   const handleOpenChange = (open: boolean) => {
     setOpen(open);
     if (!open) onClose();
   };
 
-  if (!formData) return null;
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (formData.name.length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!formData.age) {
-      newErrors.age = "Age is required";
-    } else if (formData.age < 5 || formData.age > 100) {
-      newErrors.age = "Age must be between 5 and 100";
-    }
-
-    if (!formData.class.trim()) {
-      newErrors.class = "Class is required";
-    }
-
-    if (!formData.phoneNumber) {
-      newErrors.phoneNumber = "Phone number is required";
-    } else if (
-      formData.phoneNumber < 1000000000 ||
-      formData.phoneNumber > 9999999999
-    ) {
-      newErrors.phoneNumber = "Please enter a valid 10-digit phone number";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const onSubmit = async (data: Student) => {
+    await onSave(data);
+    setOpen(false);
   };
 
-  const handleSave = async () => {
-    if (validateForm()) {
-      await onSave(formData);
-      setOpen(false);
-    }
-  };
+  if (!student) return null;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -97,120 +62,100 @@ export function EditStudentModal({
         <DialogHeader>
           <DialogTitle>Edit Student</DialogTitle>
           <DialogDescription>
-            Make changes to student information here. Click save when you&apos;re
-            done.
+            Make changes to student information here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-2 py-4">
-          <div className="space-y-1">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Full Name
-              </Label>
-              <Input
-                id="name"
-                value={formData?.name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                placeholder="Enter student's full name"
-                className={`col-span-3 ${errors.name ? "border-destructive" : ""}`}
-              />
-            </div>
-            <div className="grid grid-cols-4">
-              <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
-                {errors.name && (
-                  <span className="text-destructive">{errors.name}</span>
-                )}
-              </div>
-            </div>
-          </div>
+        
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              rules={{
+                required: "Name is required",
+                minLength: { value: 2, message: "Name must be at least 2 characters" },
+              }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Student name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="space-y-1">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="age" className="text-right">
-                Age
-              </Label>
-              <Input
-                id="age"
-                type="number"
-                value={formData?.age}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, age: Number(e.target.value) })
-                }
-                placeholder="Enter age (5-100)"
-                className={`col-span-3 ${errors.age ? "border-destructive" : ""}`}
-              />
-            </div>
-            <div className="grid grid-cols-4">
-              <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
-                {errors.age && (
-                  <span className="text-destructive">{errors.age}</span>
-                )}
-              </div>
-            </div>
-          </div>
+            <FormField
+              control={form.control}
+              name="age"
+              rules={{
+                required: "Age is required",
+                min: { value: 5, message: "Age must be between 5 and 100" },
+                max: { value: 100, message: "Age must be between 5 and 100" },
+              }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Age</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Age (5-100)"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="space-y-1">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="class" className="text-right">
-                Class
-              </Label>
-              <Input
-                id="class"
-                value={formData?.class}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, class: e.target.value })
-                }
-                placeholder="Enter class or grade"
-                className={`col-span-3 ${errors.class ? "border-destructive" : ""}`}
-              />
-            </div>
-            <div className="grid grid-cols-4">
-              <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
-                {errors.class && (
-                  <span className="text-destructive">{errors.class}</span>
-                )}
-              </div>
-            </div>
-          </div>
+            <FormField
+              control={form.control}
+              name="class"
+              rules={{ required: "Class is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Class</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Class/Grade" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="space-y-1">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phone" className="text-right">
-                Phone
-              </Label>
-              <Input
-                id="phone"
-                type="number"
-                value={formData?.phoneNumber}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({
-                    ...formData,
-                    phoneNumber: Number(e.target.value),
-                  })
-                }
-                placeholder="Enter 10-digit phone number"
-                className={`col-span-3 ${errors.phoneNumber ? "border-destructive" : ""}`}
-              />
-            </div>
-            <div className="grid grid-cols-4">
-              <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
-                {errors.phoneNumber && (
-                  <span className="text-destructive">
-                    {errors.phoneNumber}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              rules={{
+                required: "Phone number is required",
+                min: { value: 1000000000, message: "Please enter a valid 10-digit phone number" },
+                max: { value: 9999999999, message: "Please enter a valid 10-digit phone number" },
+              }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="10-digit phone number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isLoading}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={isLoading}>
+          <Button onClick={form.handleSubmit(onSubmit)} disabled={isLoading}>
             {isLoading ? "Saving..." : "Save changes"}
           </Button>
         </DialogFooter>
