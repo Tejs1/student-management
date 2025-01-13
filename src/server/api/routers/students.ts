@@ -22,7 +22,7 @@ export const studentsRouter = createTRPCRouter({
         name: z.string().min(1),
         age: z.string().min(1),
         class: z.string().min(1),
-        phoneNumber: z.string().min(10),
+        phoneNumber: z.number().min(1000000000).max(9999999999),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -45,7 +45,7 @@ export const studentsRouter = createTRPCRouter({
         name: z.string().min(1),
         age: z.string().min(1),
         class: z.string().min(1),
-        phoneNumber: z.string().min(10),
+        phoneNumber: z.number().min(1000000000).max(9999999999),
       }),
     )
     .mutation(async ({ ctx, input }) => {

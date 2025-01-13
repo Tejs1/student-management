@@ -14,7 +14,7 @@ export function StudentForm() {
     name: "",
     age: "",
     class: "",
-    phoneNumber: "",
+    phoneNumber: 0,
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -22,7 +22,7 @@ export function StudentForm() {
   const createStudent = api.students.create.useMutation({
     onSuccess: async () => {
       await utils.students.invalidate();
-      setFormData({ name: "", age: "", class: "", phoneNumber: "" });
+      setFormData({ name: "", age: "", class: "", phoneNumber: 0 });
     },
   });
 
@@ -45,9 +45,9 @@ export function StudentForm() {
       newErrors.class = "Class is required";
     }
 
-    if (!formData.phoneNumber.trim()) {
+    if (!formData.phoneNumber) {
       newErrors.phoneNumber = "Phone number is required";
-    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+    } else if (formData.phoneNumber < 1000000000 || formData.phoneNumber > 9999999999) {
       newErrors.phoneNumber = "Please enter a valid 10-digit phone number";
     }
 
@@ -105,10 +105,10 @@ export function StudentForm() {
 
       <div className="flex flex-col gap-1">
         <input
-          type="tel"
+          type="number"
           placeholder="Phone Number"
-          value={formData.phoneNumber}
-          onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+          value={formData.phoneNumber || ""}
+          onChange={(e) => setFormData({ ...formData, phoneNumber: Number.parseInt(e.target.value) || 0 })}
           className={`rounded-lg px-4 py-2 ${
             errors.phoneNumber ? "border-2 border-red-500" : ""
           }`}

@@ -23,7 +23,7 @@ export const students = createTable("student", {
   name: varchar("name", { length: 256 }),
   age: varchar("age").notNull(),
   class: varchar("class").notNull(),
-  phoneNumber: varchar("phone_number").notNull(),
+  phoneNumber: integer("phone_number").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
