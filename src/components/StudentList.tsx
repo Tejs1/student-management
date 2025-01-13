@@ -34,8 +34,8 @@ function StudentListContent({ search }: { search: string }) {
     }
   };
 
-  const handleUpdate = (student: Student) => {
-    updateStudent.mutate(student);
+  const handleUpdate = async (student: Student): Promise<void> => {
+    await updateStudent.mutateAsync({ ...student, age: Number(student.age) });
   };
 
   if (isLoading)
@@ -56,9 +56,15 @@ function StudentListContent({ search }: { search: string }) {
             <CardContent className="flex items-center justify-between p-6">
               <div className="space-y-1">
                 <h3 className="font-semibold">{student.name}</h3>
-                <p className="text-sm text-muted-foreground">Age: {student.age}</p>
-                <p className="text-sm text-muted-foreground">Class: {student.class}</p>
-                <p className="text-sm text-muted-foreground">Phone: {student.phoneNumber}</p>
+                <p className="text-sm text-muted-foreground">
+                  Age: {student.age}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Class: {student.class}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Phone: {student.phoneNumber}
+                </p>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -83,7 +89,7 @@ function StudentListContent({ search }: { search: string }) {
         student={editingStudent}
         onClose={() => setEditingStudent(null)}
         onSave={handleUpdate}
-        isLoading={updateStudent.status === 'pending'}
+        isLoading={updateStudent.status === "pending"}
       />
     </>
   );

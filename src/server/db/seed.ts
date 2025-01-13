@@ -5,7 +5,7 @@ export interface Student {
   name: string;
   age: number;
   class: string;
-  phoneNumber: number;
+  phoneNumber: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,7 +15,7 @@ export const mockStudents: Student[] = [
     name: "John Doe",
     age: 15,
     class: "10A",
-    phoneNumber: 1234567890,
+    phoneNumber: "1234567890",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -23,7 +23,7 @@ export const mockStudents: Student[] = [
     name: "Jane Smith",
     age: 16,
     class: "11B",
-    phoneNumber: 2345678901,
+    phoneNumber: "2345678901",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -31,7 +31,7 @@ export const mockStudents: Student[] = [
     name: "Mike Johnson",
     age: 14,
     class: "9C",
-    phoneNumber: 3456789012,
+    phoneNumber: "3456789012",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -39,7 +39,7 @@ export const mockStudents: Student[] = [
     name: "Sarah Williams",
     age: 15,
     class: "10B",
-    phoneNumber: 4567890123,
+    phoneNumber: "4567890123",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -47,7 +47,7 @@ export const mockStudents: Student[] = [
     name: "Tom Brown",
     age: 16,
     class: "11A",
-    phoneNumber: 5678901234,
+    phoneNumber: "5678901234",
     createdAt: new Date(),
     updatedAt: new Date(),
   },

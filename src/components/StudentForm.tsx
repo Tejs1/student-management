@@ -33,7 +33,10 @@ export function StudentForm() {
   });
 
   const onSubmit = (data: Student) => {
-    createStudent.mutate(data);
+    createStudent.mutate({
+      ...data,
+      age: Number(data.age),
+    });
   };
 
   return (
@@ -44,7 +47,10 @@ export function StudentForm() {
           name="name"
           rules={{
             required: "Name is required",
-            minLength: { value: 2, message: "Name must be at least 2 characters" },
+            minLength: {
+              value: 2,
+              message: "Name must be at least 2 characters",
+            },
           }}
           render={({ field }) => (
             <FormItem>
