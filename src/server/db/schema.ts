@@ -1,8 +1,12 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
-
 import { sql } from "drizzle-orm";
-import { index, int, sqliteTableCreator, text } from "drizzle-orm/sqlite-core";
+import {
+  integer,
+  pgTableCreator,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -10,20 +14,20 @@ import { index, int, sqliteTableCreator, text } from "drizzle-orm/sqlite-core";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = sqliteTableCreator(
+export const createTable = pgTableCreator(
   (name) => `student-management_${name}`,
 );
 
 export const students = createTable("student", {
-  id: int("id").primaryKey().notNull(),
-  name: text("name").notNull(),
-  age: text("age").notNull(),
-  class: text("class").notNull(),
-  phoneNumber: text("phone_number").notNull(),
-  createdAt: int("created_at", { mode: "timestamp" })
-    .notNull()
-    .default(new Date()),
-  updatedAt: int("updated_at", { mode: "timestamp" })
-    .notNull()
-    .default(new Date()),
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: varchar("name", { length: 256 }),
+  age: varchar("age").notNull(),
+  class: varchar("class").notNull(),
+  phoneNumber: varchar("phone_number").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
 });
