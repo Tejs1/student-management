@@ -15,7 +15,6 @@ function StudentListContent({ search }: { search: string }) {
     },
   });
 
-  if (!students && !isLoading) return <div>No students found</div>;
   if (isLoading)
     return (
       <div className="grid gap-4">
@@ -24,6 +23,7 @@ function StudentListContent({ search }: { search: string }) {
         ))}
       </div>
     );
+  if (!students) return <div>No students found</div>;
 
   return (
     <div className="grid gap-4">
