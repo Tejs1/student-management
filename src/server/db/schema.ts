@@ -20,7 +20,7 @@ export const createTable = pgTableCreator(
 );
 
 export const students = createTable("student", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(), 
   name: varchar("name", { length: 256 }).notNull(),
   age: smallint("age").notNull(),
   class: varchar("class").notNull(),
@@ -28,7 +28,7 @@ export const students = createTable("student", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-    () => new Date(),
-  ),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });

@@ -2,7 +2,6 @@ import { db } from "@/server/db";
 import { students } from "./schema";
 
 export interface Student {
-  id: number;
   name: string;
   age: number;
   class: string;
@@ -13,7 +12,6 @@ export interface Student {
 
 export const mockStudents: Student[] = [
   {
-    id: 1,
     name: "John Doe",
     age: 15,
     class: "10A",
@@ -22,7 +20,6 @@ export const mockStudents: Student[] = [
     updatedAt: new Date(),
   },
   {
-    id: 2,
     name: "Jane Smith",
     age: 16,
     class: "11B",
@@ -31,7 +28,6 @@ export const mockStudents: Student[] = [
     updatedAt: new Date(),
   },
   {
-    id: 3,
     name: "Mike Johnson",
     age: 14,
     class: "9C",
@@ -40,7 +36,6 @@ export const mockStudents: Student[] = [
     updatedAt: new Date(),
   },
   {
-    id: 4,
     name: "Sarah Williams",
     age: 15,
     class: "10B",
@@ -49,7 +44,6 @@ export const mockStudents: Student[] = [
     updatedAt: new Date(),
   },
   {
-    id: 5,
     name: "Tom Brown",
     age: 16,
     class: "11A",
