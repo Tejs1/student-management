@@ -2,6 +2,13 @@
 import { useState } from "react";
 import { api } from "@/trpc/react";
 
+type FormErrors = {
+  name?: string;
+  age?: string;
+  class?: string;
+  phoneNumber?: string;
+};
+
 export function StudentForm() {
   const [formData, setFormData] = useState({
     name: "",
@@ -9,6 +16,7 @@ export function StudentForm() {
     class: "",
     phoneNumber: "",
   });
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const utils = api.useUtils();
   const createStudent = api.students.create.useMutation({
@@ -18,47 +26,96 @@ export function StudentForm() {
     },
   });
 
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
+
+    if (!formData.age.trim()) {
+      newErrors.age = "Age is required";
+    } else if (Number.isNaN(Number(formData.age)) || Number(formData.age) < 5 || Number(formData.age) > 100) {
+      newErrors.age = "Age must be a number between 5 and 100";
+    }
+
+    if (!formData.class.trim()) {
+      newErrors.class = "Class is required";
+    }
+
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = "Please enter a valid 10-digit phone number";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createStudent.mutate(formData);
+    if (validateForm()) {
+      createStudent.mutate(formData);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <input
-        type="text"
-        placeholder="Name"
-        value={formData.name}
-        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        className="rounded-lg px-4 py-2"
-        required
-      />
-      <input
-        type="text"
-        placeholder="Age"
-        value={formData.age}
-        onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-        className="rounded-lg px-4 py-2"
-        required
-      />
-      <input
-        type="text"
-        placeholder="Class"
-        value={formData.class}
-        onChange={(e) => setFormData({ ...formData, class: e.target.value })}
-        className="rounded-lg px-4 py-2"
-        required
-      />
-      <input
-        type="tel"
-        placeholder="Phone Number"
-        value={formData.phoneNumber}
-        onChange={(e) =>
-          setFormData({ ...formData, phoneNumber: e.target.value })
-        }
-        className="rounded-lg px-4 py-2"
-        required
-      />
+      <div className="flex flex-col gap-1">
+        <input
+          type="text"
+          placeholder="Name"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          className={`rounded-lg px-4 py-2 ${
+            errors.name ? "border-2 border-red-500" : ""
+          }`}
+        />
+        {errors.name && <span className="text-sm text-red-500">{errors.name}</span>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <input
+          type="text"
+          placeholder="Age"
+          value={formData.age}
+          onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+          className={`rounded-lg px-4 py-2 ${
+            errors.age ? "border-2 border-red-500" : ""
+          }`}
+        />
+        {errors.age && <span className="text-sm text-red-500">{errors.age}</span>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <input
+          type="text"
+          placeholder="Class"
+          value={formData.class}
+          onChange={(e) => setFormData({ ...formData, class: e.target.value })}
+          className={`rounded-lg px-4 py-2 ${
+            errors.class ? "border-2 border-red-500" : ""
+          }`}
+        />
+        {errors.class && <span className="text-sm text-red-500">{errors.class}</span>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <input
+          type="tel"
+          placeholder="Phone Number"
+          value={formData.phoneNumber}
+          onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+          className={`rounded-lg px-4 py-2 ${
+            errors.phoneNumber ? "border-2 border-red-500" : ""
+          }`}
+        />
+        {errors.phoneNumber && <span className="text-sm text-red-500">{errors.phoneNumber}</span>}
+      </div>
+
       <button
         type="submit"
         className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
