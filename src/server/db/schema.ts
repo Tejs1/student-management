@@ -10,7 +10,23 @@ import { index, int, sqliteTableCreator, text } from "drizzle-orm/sqlite-core";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = sqliteTableCreator((name) => `student-management_${name}`);
+export const createTable = sqliteTableCreator(
+  (name) => `student-management_${name}`,
+);
+
+export const students = createTable("student", {
+  id: int("id").primaryKey().notNull(),
+  name: text("name").notNull(),
+  age: text("age").notNull(),
+  class: text("class").notNull(),
+  phoneNumber: text("phone_number").notNull(),
+  createdAt: int("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(new Date()),
+  updatedAt: int("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(new Date()),
+});
 
 export const posts = createTable(
   "post",
@@ -21,10 +37,10 @@ export const posts = createTable(
       .default(sql`(unixepoch())`)
       .notNull(),
     updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
-      () => new Date()
+      () => new Date(),
     ),
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );
