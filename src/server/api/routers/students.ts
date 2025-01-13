@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { students } from "../../db/schema";
-import { eq, like } from "drizzle-orm";
+import { eq, ilike } from "drizzle-orm";
 
 export const studentsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
@@ -12,7 +12,8 @@ export const studentsRouter = createTRPCRouter({
     return await ctx.db
       .select()
       .from(students)
-      .where(like(students.name, `%${input}%`));
+      .where(ilike(students.name, `%${input}%`))
+      .orderBy(students.createdAt);
   }),
 
   create: publicProcedure
@@ -25,11 +26,16 @@ export const studentsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.insert(students).values({
-        ...input,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+      try {
+        await ctx.db.insert(students).values({
+          ...input,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+        return { success: true };
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
     }),
 
   update: publicProcedure
@@ -44,13 +50,23 @@ export const studentsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
-      return await ctx.db
-        .update(students)
-        .set({ ...data, updatedAt: new Date() })
-        .where(eq(students.id, id));
+      try {
+        await ctx.db
+          .update(students)
+          .set({ ...data, updatedAt: new Date() })
+          .where(eq(students.id, id));
+        return { success: true };
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
     }),
 
   delete: publicProcedure.input(z.number()).mutation(async ({ ctx, input }) => {
-    return await ctx.db.delete(students).where(eq(students.id, input));
+    try {
+      await ctx.db.delete(students).where(eq(students.id, input));
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
   }),
 });
