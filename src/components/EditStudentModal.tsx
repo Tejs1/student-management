@@ -1,6 +1,17 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import type { Student } from "../types/student";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 interface EditStudentModalProps {
   student: Student | null;
@@ -16,28 +27,28 @@ type FormErrors = {
   phoneNumber?: string;
 };
 
-export function EditStudentModal({ student, onClose, onSave, isLoading }: EditStudentModalProps) {
+export function EditStudentModal({
+  student,
+  onClose,
+  onSave,
+  isLoading,
+}: EditStudentModalProps) {
   const [formData, setFormData] = useState<Student | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
-  const modalRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (student) {
       setFormData(student);
       setErrors({});
+      setOpen(true);
     }
   }, [student]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose]);
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open);
+    if (!open) onClose();
+  };
 
   if (!formData) return null;
 
@@ -62,7 +73,10 @@ export function EditStudentModal({ student, onClose, onSave, isLoading }: EditSt
 
     if (!formData.phoneNumber) {
       newErrors.phoneNumber = "Phone number is required";
-    } else if (formData.phoneNumber < 1000000000 || formData.phoneNumber > 9999999999) {
+    } else if (
+      formData.phoneNumber < 1000000000 ||
+      formData.phoneNumber > 9999999999
+    ) {
       newErrors.phoneNumber = "Please enter a valid 10-digit phone number";
     }
 
@@ -73,78 +87,133 @@ export function EditStudentModal({ student, onClose, onSave, isLoading }: EditSt
   const handleSave = async () => {
     if (validateForm()) {
       await onSave(formData);
+      setOpen(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div ref={modalRef} className="w-full max-w-md rounded-lg bg-white p-6">
-        <h2 className="mb-4 text-xl font-bold">Edit Student</h2>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`rounded-lg border px-4 py-2 ${errors.name ? "border-red-500" : ""}`}
-              placeholder="Name"
-            />
-            {errors.name && <span className="text-sm text-red-500">{errors.name}</span>}
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Edit Student</DialogTitle>
+          <DialogDescription>
+            Make changes to student information here. Click save when you're
+            done.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-2 py-4">
+          <div className="space-y-1">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Full Name
+              </Label>
+              <Input
+                id="name"
+                value={formData?.name}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                placeholder="Enter student's full name"
+                className={`col-span-3 ${errors.name ? "border-red-500" : ""}`}
+              />
+            </div>
+            <div className="grid grid-cols-4">
+              <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
+                {errors.name && (
+                  <span className="text-red-500">{errors.name}</span>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <input
-              type="text"
-              value={formData.age}
-              onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-              className={`rounded-lg border px-4 py-2 ${errors.age ? "border-red-500" : ""}`}
-              placeholder="Age"
-            />
-            {errors.age && <span className="text-sm text-red-500">{errors.age}</span>}
+          <div className="space-y-1">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="age" className="text-right">
+                Age
+              </Label>
+              <Input
+                id="age"
+                value={formData?.age}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({ ...formData, age: e.target.value })
+                }
+                placeholder="Enter age (5-100)"
+                className={`col-span-3 ${errors.age ? "border-red-500" : ""}`}
+              />
+            </div>
+            <div className="grid grid-cols-4">
+              <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
+                {errors.age && (
+                  <span className="text-red-500">{errors.age}</span>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <input
-              type="text"
-              value={formData.class}
-              onChange={(e) => setFormData({ ...formData, class: e.target.value })}
-              className={`rounded-lg border px-4 py-2 ${errors.class ? "border-red-500" : ""}`}
-              placeholder="Class"
-            />
-            {errors.class && <span className="text-sm text-red-500">{errors.class}</span>}
+          <div className="space-y-1">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="class" className="text-right">
+                Class
+              </Label>
+              <Input
+                id="class"
+                value={formData?.class}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({ ...formData, class: e.target.value })
+                }
+                placeholder="Enter class or grade"
+                className={`col-span-3 ${errors.class ? "border-red-500" : ""}`}
+              />
+            </div>
+            <div className="grid grid-cols-4">
+              <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
+                {errors.class && (
+                  <span className="text-red-500">{errors.class}</span>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <input
-              type="number"
-              value={formData.phoneNumber}
-              onChange={(e) => setFormData({ ...formData, phoneNumber: Number(e.target.value) })}
-              className={`rounded-lg border px-4 py-2 ${errors.phoneNumber ? "border-red-500" : ""}`}
-              placeholder="Phone Number"
-            />
-            {errors.phoneNumber && <span className="text-sm text-red-500">{errors.phoneNumber}</span>}
-          </div>
-
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
-              disabled={isLoading}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:bg-blue-300"
-              disabled={isLoading}
-            >
-              {isLoading ? "Saving..." : "Save Changes"}
-            </button>
+          <div className="space-y-1">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phone" className="text-right">
+                Phone
+              </Label>
+              <Input
+                id="phone"
+                type="number"
+                value={formData?.phoneNumber}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({
+                    ...formData,
+                    phoneNumber: Number(e.target.value),
+                  })
+                }
+                placeholder="Enter 10-digit phone number"
+                className={`col-span-3 ${errors.phoneNumber ? "border-red-500" : ""}`}
+              />
+            </div>
+            <div className="grid grid-cols-4">
+              <div className="col-span-3 col-start-2 min-h-[16px] text-xs">
+                {errors.phoneNumber && (
+                  <span className="text-red-500">
+                    {errors.phoneNumber}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={isLoading}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} disabled={isLoading}>
+            {isLoading ? "Saving..." : "Save changes"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
