@@ -61,9 +61,9 @@ export function EditStudentModal({
       newErrors.name = "Name must be at least 2 characters";
     }
 
-    if (!formData.age.trim()) {
+    if (!formData.age) {
       newErrors.age = "Age is required";
-    } else if (Number(formData.age) < 5 || Number(formData.age) > 100) {
+    } else if (formData.age < 5 || formData.age > 100) {
       newErrors.age = "Age must be between 5 and 100";
     }
 
@@ -97,7 +97,7 @@ export function EditStudentModal({
         <DialogHeader>
           <DialogTitle>Edit Student</DialogTitle>
           <DialogDescription>
-            Make changes to student information here. Click save when you're
+            Make changes to student information here. Click save when you&apos;re
             done.
           </DialogDescription>
         </DialogHeader>
@@ -133,9 +133,10 @@ export function EditStudentModal({
               </Label>
               <Input
                 id="age"
+                type="number"
                 value={formData?.age}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, age: e.target.value })
+                  setFormData({ ...formData, age: Number(e.target.value) })
                 }
                 placeholder="Enter age (5-100)"
                 className={`col-span-3 ${errors.age ? "border-red-500" : ""}`}

@@ -12,7 +12,7 @@ type FormErrors = {
 export function StudentForm() {
   const [formData, setFormData] = useState({
     name: "",
-    age: "",
+    age: 0,
     class: "",
     phoneNumber: 0,
   });
@@ -22,7 +22,7 @@ export function StudentForm() {
   const createStudent = api.students.create.useMutation({
     onSuccess: async () => {
       await utils.students.invalidate();
-      setFormData({ name: "", age: "", class: "", phoneNumber: 0 });
+      setFormData({ name: "", age: 0, class: "", phoneNumber: 0 });
     },
   });
 
@@ -35,10 +35,10 @@ export function StudentForm() {
       newErrors.name = "Name must be at least 2 characters";
     }
 
-    if (!formData.age.trim()) {
+    if (!formData.age) {
       newErrors.age = "Age is required";
-    } else if (Number.isNaN(Number(formData.age)) || Number(formData.age) < 5 || Number(formData.age) > 100) {
-      newErrors.age = "Age must be a number between 5 and 100";
+    } else if (formData.age < 5 || formData.age > 100) {
+      newErrors.age = "Age must be between 5 and 100";
     }
 
     if (!formData.class.trim()) {
@@ -79,10 +79,10 @@ export function StudentForm() {
 
       <div className="flex flex-col gap-1">
         <input
-          type="text"
+          type="number"
           placeholder="Age"
-          value={formData.age}
-          onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+          value={formData.age || ""}
+          onChange={(e) => setFormData({ ...formData, age: Number(e.target.value) })}
           className={`rounded-lg px-4 py-2 ${
             errors.age ? "border-2 border-red-500" : ""
           }`}

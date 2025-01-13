@@ -4,7 +4,7 @@ import { students } from "./schema";
 export interface Student {
   id: number;
   name: string;
-  age: string;
+  age: number;
   class: string;
   phoneNumber: number;
   createdAt: Date;
@@ -15,7 +15,7 @@ export const mockStudents: Student[] = [
   {
     id: 1,
     name: "John Doe",
-    age: "15",
+    age: 15,
     class: "10A",
     phoneNumber: 1234567890,
     createdAt: new Date(),
@@ -24,7 +24,7 @@ export const mockStudents: Student[] = [
   {
     id: 2,
     name: "Jane Smith",
-    age: "16",
+    age: 16,
     class: "11B",
     phoneNumber: 2345678901,
     createdAt: new Date(),
@@ -33,7 +33,7 @@ export const mockStudents: Student[] = [
   {
     id: 3,
     name: "Mike Johnson",
-    age: "14",
+    age: 14,
     class: "9C",
     phoneNumber: 3456789012,
     createdAt: new Date(),
@@ -42,7 +42,7 @@ export const mockStudents: Student[] = [
   {
     id: 4,
     name: "Sarah Williams",
-    age: "15",
+    age: 15,
     class: "10B",
     phoneNumber: 4567890123,
     createdAt: new Date(),
@@ -51,7 +51,7 @@ export const mockStudents: Student[] = [
   {
     id: 5,
     name: "Tom Brown",
-    age: "16",
+    age: 16,
     class: "11A",
     phoneNumber: 5678901234,
     createdAt: new Date(),
