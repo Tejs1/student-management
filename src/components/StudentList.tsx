@@ -2,14 +2,8 @@
 import { api } from "@/trpc/react";
 import { useState, useEffect } from "react";
 import { StudentSkeleton } from "./StudentSkeleton";
-
-type Student = {
-  id: number;
-  name: string;
-  age: string;
-  class: string;
-  phoneNumber: number;
-};
+import { EditStudentModal } from "./EditStudentModal";
+import type { Student } from "../types/student";
 
 function StudentListContent({ search }: { search: string }) {
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
@@ -17,7 +11,7 @@ function StudentListContent({ search }: { search: string }) {
     ? api.students.getByName.useQuery(search)
     : api.students.getAll.useQuery();
 
-  const utils = api.useContext();
+  const utils = api.useUtils();
   const deleteStudent = api.students.delete.useMutation({
     onSuccess: async () => {
       await utils.students.invalidate();
@@ -52,95 +46,49 @@ function StudentListContent({ search }: { search: string }) {
   if (!students) return <div>No students found</div>;
 
   return (
-    <div className="grid gap-4">
-      {students.map((student) => (
-        <div
-          key={student.id}
-          className="flex items-center justify-between rounded-lg bg-white p-4"
-        >
-          {editingStudent?.id === student.id ? (
-            <div className="flex w-full gap-4">
-              <input
-                type="text"
-                value={editingStudent.name}
-                onChange={(e) =>
-                  setEditingStudent({ ...editingStudent, name: e.target.value })
-                }
-                className="rounded px-2 py-1"
-              />
-              <input
-                type="text"
-                value={editingStudent.age}
-                onChange={(e) =>
-                  setEditingStudent({ ...editingStudent, age: e.target.value })
-                }
-                className="rounded px-2 py-1"
-              />
-              <input
-                type="text"
-                value={editingStudent.class}
-                onChange={(e) =>
-                  setEditingStudent({ ...editingStudent, class: e.target.value })
-                }
-                className="rounded px-2 py-1"
-              />
-              <input
-                type="number"
-                value={editingStudent.phoneNumber}
-                onChange={(e) =>
-                  setEditingStudent({
-                    ...editingStudent,
-                    phoneNumber: Number(e.target.value),
-                  })
-                }
-                className="rounded px-2 py-1"
-              />
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleUpdate(editingStudent)}
-                  className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingStudent(null)}
-                  className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
-                >
-                  Cancel
-                </button>
-              </div>
+    <>
+      <div className="grid gap-4">
+        {students.map((student) => (
+          <div
+            key={student.id}
+            className="flex items-center justify-between rounded-lg bg-white p-4"
+          >
+            <div>
+              <h3 className="font-bold">{student.name}</h3>
+              <p>Age: {student.age}</p>
+              <p>Class: {student.class}</p>
+              <p>Phone: {student.phoneNumber}</p>
             </div>
-          ) : (
-            <>
-              <div>
-                <h3 className="font-bold">{student.name}</h3>
-                <p>Age: {student.age}</p>
-                <p>Class: {student.class}</p>
-                <p>Phone: {student.phoneNumber}</p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setEditingStudent(student as Student)}
-                  className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-                  type="button"
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(student.id)}
-                  className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      ))}
-    </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setEditingStudent(student)}
+                type="button"
+                className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDelete(student.id)}
+                className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <EditStudentModal
+        student={editingStudent}
+        onClose={() => setEditingStudent(null)}
+        onSave={async (student) => {
+          await updateStudent.mutateAsync(student);
+          setEditingStudent(null);
+        }}
+        isLoading={updateStudent.status === 'pending'}
+      />
+    </>
   );
 }
 

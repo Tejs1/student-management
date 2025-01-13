@@ -20,7 +20,7 @@ export const createTable = pgTableCreator(
 
 export const students = createTable("student", {
   id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-  name: varchar("name", { length: 256 }),
+  name: varchar("name", { length: 256 }).notNull(),
   age: varchar("age").notNull(),
   class: varchar("class").notNull(),
   phoneNumber: integer("phone_number").notNull(),
