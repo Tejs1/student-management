@@ -32,3 +32,11 @@ export const students = createTable("student", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
+
+export const logs = createTable("logs", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  data: varchar("data", { length: 1024 }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});
