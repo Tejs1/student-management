@@ -32,7 +32,7 @@ export async function GET() {
   }
   //throw erroes randomly
   if (Math.random() > 0.5) {
-    throw new Error("Random error");
+    return NextResponse.json({ error: "Failed to get logs" }, { status: 404 });
   }
   return NextResponse.json(data);
 }
