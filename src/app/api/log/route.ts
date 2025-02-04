@@ -30,9 +30,6 @@ export async function GET() {
   if (!data) {
     return NextResponse.json({ error: "Failed to get logs" }, { status: 500 });
   }
-  //throw erroes randomly
-  if (Math.random() > 0.1) {
-    return NextResponse.json({ error: "Failed to get logs" }, { status: 404 });
-  }
+
   return NextResponse.json(data);
 }
