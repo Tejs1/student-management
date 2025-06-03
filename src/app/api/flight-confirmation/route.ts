@@ -82,8 +82,8 @@ function generateMockFlightData(ticketNo: number): FlightConfirmationResponse {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    
+    const body = await req.json() as FlightConfirmationRequest;
+
     // Validate request body
     if (typeof body.ticketNo !== 'number') {
       return NextResponse.json(
